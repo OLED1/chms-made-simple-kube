@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cms-made-simple-kube
+spec:
+  selector:
+    matchLabels:
+      app: cms-made-simple-kube
+  template:
+    metadata:
+      labels:
+        app: cms-made-simple-kube
+    spec:
+      containers:
+      - name: cms-made-simple-kube
+        image: php:apache
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cms-made-simple-kube
+spec:
+  selector:
+    app: cms-made-simple-kube
+  ports:
+  - port: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cms-made-simple-kube-ingress
+  labels:
+    name: cms-made-simple-kube-ingress
+spec:
+  rules:
+  - host: cms-made-simple-kube.edtmair.at
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: cms-made-simple-kube
+            port: 
+              number: 80
+
+
